@@ -10,10 +10,15 @@ pub struct Color {
     a: u8,
 }
 
+pub struct Size {
+    width: u32,
+    height: u32,
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new())
-        .bind(("0.0.0.0", 8080))?
+        .bind(("127.0.0.1", 8080))?
         .run()
         .await
 }
