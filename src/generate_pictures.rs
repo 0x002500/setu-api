@@ -1,33 +1,14 @@
 use image::{ImageBuffer, Rgba};
-use std::path::Path;
+use std::io::Cursor;
 
-use crate::Color;
+use crate::{Color, Size};
 
-pub fn generate_pictures(color: Color) -> Result<(), Box<dyn std::error::Error>> {
-    let width = 256;
-    let height = 256;
+async fn generate_pictures(color: Color, size: Size) -> Vec<u8>{
+    let img: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::<Rgba<u8>, _>::from_fn(size.width, size.height, |_x: u32, _y: u32| Rgba([color.r, color.g, color.b, color.a]));
 
-    let mut img = ImageBuffer::new(width, height);
+    let mut buf: Cursor<Vec<u8>> = Cursor::new(Vec::new());
+    img.write_to(&mut buf, image::ImageFormat::Png)
+        .unwrap();
 
-    for x in 0..width {
-        for y in 0..height {
-            let r = color.r;
-            let g = color.g;
-            let b = color.b;
-            let a = color.a;
-
-            let pixel = Rgba([r, g, b, a]);
-
-            img.put_pixel(x, y, pixel);
-        }
-    }
-
-    let output_path = Path::new("output.png");
-
-    println!("正在保存图片到: {}", output_path.display());
-    img.save_with_format(output_path, image::ImageFormat::Png)?;
-
-    println!("图片已成功生成！");
-
-    Ok(())
+    buf.into_inner()
 }
