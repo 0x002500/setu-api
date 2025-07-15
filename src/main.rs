@@ -12,13 +12,22 @@ pub struct Color {
 
 pub struct Size {
     width: u32,
-    height: u32,
+    height: u32
 }
+
+#[get("/")]
+async fn index() -> impl Responder {
+    HttpResponse::Ok().body("Thanks for using setu-api!")
+}
+
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new())
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(index)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
