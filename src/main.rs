@@ -1,4 +1,4 @@
-use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
+use actix_web::{App, HttpResponse, HttpServer, Responder, get};
 
 mod generate_pictures;
 mod hex2color;
