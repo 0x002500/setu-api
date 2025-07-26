@@ -1,7 +1,6 @@
 use crate::Color;
 
 pub fn hex2color(hex: &str) -> Color {
-    let hex = hex.trim_start_matches('#');
     let len = hex.len();
 
     let r: u8 = u8::from_str_radix(&hex[0..2], 16).unwrap_or(0);
