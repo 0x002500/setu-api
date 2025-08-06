@@ -1,6 +1,6 @@
+use crate::{generate_pictures::generate_pictures, hex2color::hex2color};
 use actix_web::{App, HttpResponse, HttpServer, Responder, get, web};
 use serde::Deserialize;
-use crate::{generate_pictures::generate_pictures, hex2color::hex2color};
 
 mod generate_pictures;
 mod hex2color;
@@ -14,14 +14,14 @@ pub struct Color {
 
 pub struct Size {
     width: u32,
-    height: u32
+    height: u32,
 }
 
 #[derive(Deserialize)]
 struct Pic {
     color: String,
     width: u32,
-    height: u32
+    height: u32,
 }
 
 #[get("/")]
@@ -31,19 +31,21 @@ async fn index() -> impl Responder {
 
 #[get("/pic")]
 async fn pic(pic: web::Query<Pic>) -> impl Responder {
-    let size: Size = Size { width: pic.width, height: pic.height };
+    let size: Size = Size {
+        width: pic.width,
+        height: pic.height,
+    };
     let color: Color = hex2color(&pic.color);
     let image_bytes: Vec<u8> = generate_pictures(color, size).await;
-    HttpResponse::Ok().body(image_bytes)
+    HttpResponse::Ok()
+        .content_type("image/png")
+        .body(image_bytes)
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    HttpServer::new(|| App::new().service(index).service(pic))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
 }
